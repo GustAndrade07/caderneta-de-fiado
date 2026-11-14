@@ -178,11 +178,11 @@ Linux / Mac:
 
 | Nome completo | RM | Função |
 | --- | --- | --- |
-| Gustavo Oliveira Fernandes de Andrade | | Banco, entidades e coordenação |
-| Leandro Sato | | Segurança JWT |
-| Pedro Henrique Teixeira | | API do Fiado |
-| Ryan Santos | | Login, cadastro e erros da API |
-| João Pedro Cavanhas | | Base do app |
-| Nicolas Thomaz | | Lista e Detalhe |
-| Vinicius Soares | | Login e Cadastro |
-| Eduardo Campos | | Formulário e Perfil |
+| Gustavo Oliveira Fernandes de Andrade | 1142439157 | Banco, entidades e coordenação |
+| Leandro Sato | 1142446679 | Segurança JWT |
+| Pedro Henrique Teixeira | 1143155053 | API do Fiado |
+| Ryan Santos | 1142463435 | Login, cadastro e erros da API |
+| João Pedro Cavanhas | 1143032617 | Base do app |
+| Nicolas Thomaz | 1142440716 | Lista e Detalhe |
+| Vinicius Soares | 1142945398 | Login e Cadastro |
+| Eduardo Campos | 1143154427 | Formulário e Perfil |
