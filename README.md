@@ -31,7 +31,7 @@ A Caderneta de Fiado oferece a esses comerciantes uma forma simples e gratuita d
 | Build | Maven (via Maven Wrapper `mvnw`, não precisa instalar o Maven) |
 | Persistência | Spring Data JPA (Hibernate) com o dialeto SQLite do `hibernate-community-dialects` |
 | Banco de dados | SQLite (driver `sqlite-jdbc`), arquivo `fiado.db` |
-| Segurança | Spring Security (senhas com hash BCrypt) |
+| Segurança | Spring Security com autenticação JWT (biblioteca `jjwt` 0.12.6, algoritmo HS256) e senhas com hash BCrypt |
 | Validação | Spring Boot Validation (Bean Validation: `@NotBlank`, `@Email`, `@Positive`...) |
 | API | Spring Web MVC (REST) |
 | Produtividade | Lombok (getters, setters e construtores gerados) |
@@ -51,6 +51,7 @@ Pacotes do back-end (`backend/src/main/java/br/com/senac/cadernetafiado`):
 | --- | --- |
 | `modelo` | Entidades JPA (`Usuario`, `Fiado`) |
 | `repositorio` | Interfaces Spring Data (`UsuarioRepositorio`, `FiadoRepositorio`) |
+| `seguranca` | Autenticação JWT: `JwtService`, `JwtFiltro`, `ConfiguracaoSeguranca`, `UsuarioDetalhes` |
 | `configuracao` | Dados de exemplo para a demonstração (`DadosExemplo`) |
 
 ## Modelo de dados
@@ -159,6 +160,82 @@ Linux / Mac:
 ```bash
 ./mvnw test
 ```
+
+## Segurança (JWT)
+
+Quem chama a API precisa provar quem é. O login devolve um token, e esse token vai em toda requisição seguinte.
+
+### Rotas
+
+| Rota | Precisa de token? |
+| --- | --- |
+| `/auth/**` (cadastro e login) | Não |
+| Todas as outras | Sim |
+
+A regra é **negar por padrão**: endpoint novo já nasce protegido, sem precisar mexer na configuração de segurança.
+
+### O token
+
+Vai no cabeçalho, assim:
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
+```
+
+Dentro dele só tem o e-mail do usuário (`sub`), a hora de emissão (`iat`) e a de expiração (`exp`, 24 horas depois). Senha e dado pessoal nunca entram no token.
+
+### Chave secreta
+
+A chave que assina o token vem da variável de ambiente `JWT_SECRET` e **não fica no repositório**. Precisa de pelo menos 32 caracteres.
+
+```bash
+# Windows (PowerShell)
+$env:JWT_SECRET = "uma-chave-longa-e-aleatoria-com-32-ou-mais"
+```
+
+```bash
+# Linux / Mac
+export JWT_SECRET="uma-chave-longa-e-aleatoria-com-32-ou-mais"
+```
+
+Sem a variável, a aplicação **sobe normalmente** em desenvolvimento, com uma chave sorteada e um aviso no log — ninguém fica travado. O preço é que reiniciar a aplicação invalida os tokens, e quem estava logado precisa entrar de novo. Em produção (perfil `prod`) a variável é obrigatória: faltando, a aplicação não sobe.
+
+### Como pegar o usuário logado no controller
+
+Nunca confie no id que vem na URL ou no corpo da requisição — senão um usuário consegue ler o fiado do outro. O dono da requisição sai sempre do token:
+
+```java
+@GetMapping("/fiados")
+public List<Fiado> listar(@AuthenticationPrincipal UsuarioDetalhes logado) {
+    Long idDoDono = logado.getUsuario().getId();
+    return servico.listarPorUsuario(idDoDono);
+}
+```
+
+Para o cadastro e o login, o pacote `seguranca` publica também um `PasswordEncoder` (BCrypt), um `AuthenticationManager` e o próprio `JwtService` — basta injetar.
+
+### Erros
+
+| Situação | Resposta |
+| --- | --- |
+| Sem token, token vencido, adulterado ou de usuário que não existe mais | `401` |
+| Autenticado, mas sem acesso ao recurso | `403` |
+
+Sempre em JSON, no mesmo formato:
+
+```json
+{ "status": 401, "erro": "nao_autorizado", "mensagem": "Token ausente ou inválido" }
+```
+
+O app usa o `401` para apagar o token e voltar para a tela de login.
+
+### Conferindo na mão
+
+```bash
+curl -i http://localhost:8080/fiados
+```
+
+Sem token, a resposta é `401`. Com `-H "Authorization: Bearer <token>"`, a requisição passa pela segurança normalmente.
 
 ## Como executar o front-end
 
