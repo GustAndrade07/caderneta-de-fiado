@@ -96,10 +96,15 @@ class SegurancaHttpTestes {
     }
 
     @Test
-    @DisplayName("Rota liberada que ainda não existe devolve 404, não 401")
-    void rotaDeAuthInexistenteRetorna404() throws Exception {
-        HttpResponse<String> resposta = chamar("/auth/login", null);
+    @DisplayName("Dentro de /auth, URL que não existe devolve 404, não 401")
+    void urlInexistenteEmRotaLiberadaRetorna404() throws Exception {
+        // De propósito um caminho que ninguém vai implementar: antes este teste
+        // batia em /auth/login, que virou rota de verdade no PR do Ryan, e aí o
+        // 404 esperado deixou de fazer sentido. O que precisa continuar valendo
+        // é que a área liberada não responde 401 para URL que não existe.
+        HttpResponse<String> resposta = chamar("/auth/nao-existe-ainda", null);
 
         assertThat(resposta.statusCode()).isEqualTo(404);
+        assertThat(resposta.body()).doesNotContain("nao_autorizado");
     }
 }
