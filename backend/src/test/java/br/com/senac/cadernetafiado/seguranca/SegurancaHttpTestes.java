@@ -90,7 +90,7 @@ class SegurancaHttpTestes {
     @Test
     @DisplayName("Com token válido, URL que não existe devolve 404 e não 401")
     void urlInexistenteComTokenRetorna404() throws Exception {
-        HttpResponse<String> resposta = chamar("/fiados/nao-existe-ainda", jwt.gerarToken(EMAIL));
+        HttpResponse<String> resposta = chamar("/rota-que-nao-existe", jwt.gerarToken(EMAIL));
 
         assertThat(resposta.statusCode()).isEqualTo(404);
     }
