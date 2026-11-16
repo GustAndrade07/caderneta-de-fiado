@@ -116,8 +116,8 @@ Antes de começar a programar, os 4 do back decidem juntos as stacks pendentes d
   PR: [#5 Segurança JWT: token, filtro e rotas protegidas](https://github.com/GustAndrade07/caderneta-de-fiado/pull/5)
 - [x] Chave secreta do JWT em variável de ambiente, nunca no GitHub
   PR: [#5 Segurança JWT: token, filtro e rotas protegidas](https://github.com/GustAndrade07/caderneta-de-fiado/pull/5)
-- [ ] Testar no Insomnia ou Postman: sem token dá 401, com token dá 200
-  Conferido no PR #5 por curl e por teste automático em servidor real (sem token 401 com corpo JSON, com token a requisição passa). A coleção desse teste entrou no repositório pelo PR [#16 Coleção do Insomnia e evidência do teste 401/200](https://github.com/GustAndrade07/caderneta-de-fiado/pull/16) (`backend/insomnia-seguranca-jwt.json`), com as respostas registradas em `backend/EVIDENCIA-CA19.md`. Falta só colar o print, por isso a tarefa segue aberta. Ajuste posterior no teste da rota liberada: [#8 Teste de 404 em URL que ninguém vai criar](https://github.com/GustAndrade07/caderneta-de-fiado/pull/8).
+- [x] Testar no Insomnia ou Postman: sem token dá 401, com token dá 200
+  Conferido no PR #5 por curl e por teste automático em servidor real (sem token 401 com corpo JSON, com token a requisição passa). A coleção desse teste entrou no repositório pelo PR [#16 Coleção do Insomnia e evidência do teste 401/200](https://github.com/GustAndrade07/caderneta-de-fiado/pull/16) (`backend/insomnia-seguranca-jwt.json`), com as respostas registradas em `backend/EVIDENCIA-CA19.md`. As prints estão em `backend/prints/` e no corpo do PR. Ajuste posterior no teste da rota liberada: [#8 Teste de 404 em URL que ninguém vai criar](https://github.com/GustAndrade07/caderneta-de-fiado/pull/8).
 
 **Estudar:** as três partes do JWT, por que ele é stateless, o que acontece quando o token expira, por que o segredo fica só no back.
 
