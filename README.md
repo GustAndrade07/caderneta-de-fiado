@@ -251,13 +251,29 @@ Na pasta `frontend/`, crie um arquivo `.env` baseado no `.env.example`:
 ```bash
 cd frontend
 cp .env.example .env
+```
+
+No `.env`, aponte `EXPO_PUBLIC_API_URL` para o back-end: `http://10.0.2.2:8080` no emulador Android ou `http://SEU_IP_LOCAL:8080` no celular com Expo Go.
+
+### Rodando o app
+
+```bash
+npm install
+npx expo start
+```
+
+Leia o QR Code com o Expo Go (ou abra no emulador) com o back-end já rodando.
+
+## Plano de Execução
+
+O plano da equipe, com as tarefas de cada pessoa e o que já foi concluído, está em [PLANO_DE_EXECUCAO.md](PLANO_DE_EXECUCAO.md).
 
 ## Como contribuir
 
 1. Crie uma branch a partir da `main`: `funcionalidade/nome-da-tarefa`
 2. Faça commits pequenos e com mensagens claras, em português
 3. Abra um Pull Request para a `main` e preencha o checklist do template
-4. Atualize o [Plano de Execução](https://claude.ai/artifact/K1DiyxEiQdNSsdgbUCeeNg) marcando as tarefas concluídas
+4. Atualize o [Plano de Execução](PLANO_DE_EXECUCAO.md) marcando as tarefas concluídas
 5. Uma pessoa da mesma área revisa e aprova antes do merge
 
 ## Integrantes
