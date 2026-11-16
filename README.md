@@ -251,6 +251,22 @@ Na pasta `frontend/`, crie um arquivo `.env` baseado no `.env.example`:
 ```bash
 cd frontend
 cp .env.example .env
+```
+
+No `.env`, aponte `EXPO_PUBLIC_API_URL` para o back-end: `http://10.0.2.2:8080` no emulador Android ou `http://SEU_IP_LOCAL:8080` no celular com Expo Go.
+
+### Rodando o app
+
+```bash
+npm install
+npx expo start
+```
+
+Leia o QR Code com o Expo Go (ou abra no emulador) com o back-end já rodando.
+
+## Plano de Execução
+
+O plano da equipe, com as tarefas de cada pessoa e o que já foi concluído, está em [PLANO_DE_EXECUCAO.md](PLANO_DE_EXECUCAO.md).
 
 ## Como contribuir
 
