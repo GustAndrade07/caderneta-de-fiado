@@ -276,7 +276,7 @@ Abra o app no Expo Go ou no emulador. Para testar, use `demo@caderneta.com` / `s
 1. Crie uma branch a partir da `main`: `funcionalidade/nome-da-tarefa`
 2. Faça commits pequenos e com mensagens claras, em português
 3. Abra um Pull Request para a `main` e preencha o checklist do template
-4. Atualize o [Plano de Execução](https://claude.ai/artifact/K1DiyxEiQdNSsdgbUCeeNg) marcando as tarefas concluídas
+4. Atualize o [Plano de Execução](PLANO_DE_EXECUCAO.md) marcando as tarefas concluídas
 5. Uma pessoa da mesma área revisa e aprova antes do merge
 
 ## Integrantes
