@@ -239,9 +239,18 @@ Sem token, a resposta é `401`. Com `-H "Authorization: Bearer <token>"`, a requ
 
 ## Como executar o front-end
 
-<!-- Será preenchido pela equipe de front -->
+### Pré-requisitos
 
-> Será preenchido pela equipe de front.
+- **Node.js 18 ou superior** instalado
+- **Expo Go** instalado no celular (Android/iOS) ou emulador configurado no computador
+
+### Configuração da API
+
+Na pasta `frontend/`, crie um arquivo `.env` baseado no `.env.example`:
+
+```bash
+cd frontend
+cp .env.example .env
 
 ## Como contribuir
 
