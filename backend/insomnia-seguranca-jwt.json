@@ -1,0 +1,87 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-11-16T23:30:00.000Z",
+  "__export_source": "insomnia.desktop.app:v8.0.0",
+  "resources": [
+    {
+      "_id": "wrk_jwt",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "Caderneta de Fiado - Seguranca JWT",
+      "description": "Teste manual do CA-19: rota protegida sem token = 401, com token = 200.",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_jwt",
+      "_type": "environment",
+      "parentId": "wrk_jwt",
+      "name": "Local",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "token": "cole-aqui-o-token-do-login"
+      },
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_1_login",
+      "_type": "request",
+      "parentId": "wrk_jwt",
+      "name": "1 - POST /auth/login (200, devolve o token)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "headers": [
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"demo@caderneta.com\",\n  \"senha\": \"senha123\"\n}"
+      },
+      "authentication": {},
+      "metaSortKey": -4
+    },
+    {
+      "_id": "req_2_sem_token",
+      "_type": "request",
+      "parentId": "wrk_jwt",
+      "name": "2 - GET /fiados SEM token (espera 401)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/fiados",
+      "headers": [],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -3
+    },
+    {
+      "_id": "req_3_com_token",
+      "_type": "request",
+      "parentId": "wrk_jwt",
+      "name": "3 - GET /fiados COM token (espera 200)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/fiados",
+      "headers": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": "Bearer",
+        "disabled": false
+      },
+      "metaSortKey": -2
+    },
+    {
+      "_id": "req_4_token_adulterado",
+      "_type": "request",
+      "parentId": "wrk_jwt",
+      "name": "4 - GET /fiados com token adulterado (espera 401, nao 500)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/fiados",
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{ _.token }}xx" }
+      ],
+      "body": {},
+      "authentication": {},
+      "metaSortKey": -1
+    }
+  ]
+}
