@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.senac.cadernetafiado.dto.ErroResposta;
 import br.com.senac.cadernetafiado.excecao.EmailJaCadastradoException;
@@ -60,6 +61,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErroResposta> recursoNaoEncontrado(NoResourceFoundException erro) {
         return responder(HttpStatus.NOT_FOUND, "Not Found", "Recurso não encontrado");
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErroResposta> erroHttp(ResponseStatusException erro) {
+        int status = erro.getStatusCode().value();
+        String mensagem = erro.getReason() != null ? erro.getReason() : "Recurso não encontrado";
+        return ResponseEntity.status(erro.getStatusCode())
+                .body(new ErroResposta(status, status == 404 ? "nao_encontrado" : "erro_http", mensagem));
     }
 
     @ExceptionHandler(Exception.class)
