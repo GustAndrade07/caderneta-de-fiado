@@ -246,11 +246,30 @@ Sem token, a resposta é `401`. Com `-H "Authorization: Bearer <token>"`, a requ
 
 ### Configuração da API
 
-Na pasta `frontend/`, crie um arquivo `.env` baseado no `.env.example`:
+Na pasta `frontend/`, crie `.env.local` (ignorado pelo Git) com o endereço da API:
 
-```bash
+```dotenv
+# Emulador Android
+EXPO_PUBLIC_API_URL=http://10.0.2.2:8080
+```
+
+Para um celular físico com Expo Go, troque `10.0.2.2` pelo IPv4 do computador na mesma rede Wi-Fi, por exemplo `http://192.168.1.10:8080`. O `localhost` do celular aponta para o próprio celular.
+
+Em dois terminais, a partir da raiz do repositório:
+
+```powershell
+cd backend
+$env:JWT_SECRET = "uma-chave-local-com-mais-de-32-caracteres"
+.\mvnw.cmd spring-boot:run
+```
+
+```powershell
 cd frontend
-cp .env.example .env
+npm ci
+npx expo start --lan
+```
+
+Abra o app no Expo Go ou no emulador. Para testar, use `demo@caderneta.com` / `senha123` ou crie uma conta. O cadastro salva o usuário em `backend/fiado.db` e entra automaticamente. Ao iniciar de novo, o app confere o token em `/usuarios/me`; mantenha `JWT_SECRET` igual entre reinícios da API para preservar a sessão.
 
 ## Como contribuir
 
