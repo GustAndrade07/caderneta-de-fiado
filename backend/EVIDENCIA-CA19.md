@@ -71,4 +71,14 @@ Date: Mon, 16 Nov 2026 23:38:15 GMT
 {"status":401,"erro":"nao_autorizado","mensagem":"Token ausente ou inválido"}
 ```
 
+## Prints do Insomnia
+
+Insomnia 13.4 (Scratch Pad), coleção `insomnia-seguranca-jwt.json` importada, contra o mesmo backend local.
+
+| Caso | Print |
+|---|---|
+| Sem token: 401 | ![sem token](prints/insomnia-sem-token-401.png) |
+| Com token: 200 | ![com token](prints/insomnia-com-token-200.png) |
+| Token adulterado: 401 | ![token adulterado](prints/insomnia-token-adulterado-401.png) |
+
 Os mesmos casos estao cobertos por teste automatizado em `SegurancaHttpTestes` e `SegurancaWebTestes`.
