@@ -28,9 +28,8 @@ function Navigator() {
           <Stack.Screen name="cadastro" options={{ title: 'Criar conta' }} />
         </Stack.Protected>
         <Stack.Protected guard={!!token} redirectTo="/login">
-          <Stack.Screen name="index" options={{ title: 'Caderneta de Fiado' }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="formulario" options={{ title: 'Registrar Fiado' }} />
-          <Stack.Screen name="perfil" options={{ title: 'Meu Perfil' }} />
           <Stack.Screen name="detalhe/[id]" options={{ title: 'Detalhes do Fiado' }} />
         </Stack.Protected>
       </Stack>
