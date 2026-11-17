@@ -1,17 +1,14 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AppStackParamList } from '../types';
+import { useLocalSearchParams } from 'expo-router';
 import { colors } from '../theme/colors';
 
-type Props = NativeStackScreenProps<AppStackParamList, 'DetalheFiado'>;
-
-export function DetalheFiadoScreen({ route }: Props) {
-  const { fiadoId } = route.params;
+export function DetalheFiadoScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Detalhe do Fiado #{fiadoId}</Text>
+      <Text style={styles.title}>Detalhe do Fiado #{id}</Text>
       <Text style={styles.subtitle}>Tela base pronta para implementação (Nicolas)</Text>
     </View>
   );

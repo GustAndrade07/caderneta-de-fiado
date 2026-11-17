@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
-import { api } from '../services/api';
+import { authService } from '../services/authService';
 import { Usuario } from '../types';
 import { colors } from '../theme/colors';
 
@@ -16,8 +16,7 @@ export function PerfilScreen() {
     setCarregando(true);
     setErro(false);
     try {
-      const resposta = await api.get<Usuario>('/usuarios/me');
-      setUsuario(resposta.data);
+      setUsuario(await authService.me());
     } catch {
       // 401 já é tratado pelo interceptador do axios (apaga o token e volta ao login).
       setErro(true);

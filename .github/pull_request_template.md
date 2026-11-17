@@ -6,7 +6,7 @@
 - 
 
 ## Checklist obrigatório
-- [ ] Marquei as tarefas concluídas no [Plano de Execução](https://claude.ai/artifact/K1DiyxEiQdNSsdgbUCeeNg) e colei o link deste PR ao lado delas
+- [ ] Marquei as tarefas concluídas no [Plano de Execução](https://github.com/GustAndrade07/caderneta-de-fiado/blob/main/PLANO_DE_EXECUCAO.md) e colei o link deste PR ao lado delas
 - [ ] Rodei o projeto e nada quebrou
 - [ ] Não subi `fiado.db`, `node_modules`, `target` nem a chave do JWT
 - [ ] Sei explicar todo o código deste PR

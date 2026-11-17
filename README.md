@@ -246,18 +246,37 @@ Sem token, a resposta é `401`. Com `-H "Authorization: Bearer <token>"`, a requ
 
 ### Configuração da API
 
-Na pasta `frontend/`, crie um arquivo `.env` baseado no `.env.example`:
+Na pasta `frontend/`, crie `.env.local` (ignorado pelo Git) com o endereço da API:
 
-```bash
+```dotenv
+# Emulador Android
+EXPO_PUBLIC_API_URL=http://10.0.2.2:8080
+```
+
+Para um celular físico com Expo Go, troque `10.0.2.2` pelo IPv4 do computador na mesma rede Wi-Fi, por exemplo `http://192.168.1.10:8080`. O `localhost` do celular aponta para o próprio celular.
+
+Em dois terminais, a partir da raiz do repositório:
+
+```powershell
+cd backend
+$env:JWT_SECRET = "uma-chave-local-com-mais-de-32-caracteres"
+.\mvnw.cmd spring-boot:run
+```
+
+```powershell
 cd frontend
-cp .env.example .env
+npm ci
+npx expo start --lan
+```
+
+Abra o app no Expo Go ou no emulador. Para testar, use `demo@caderneta.com` / `senha123` ou crie uma conta. O cadastro salva o usuário em `backend/fiado.db` e entra automaticamente. Ao iniciar de novo, o app confere o token em `/usuarios/me`; mantenha `JWT_SECRET` igual entre reinícios da API para preservar a sessão.
 
 ## Como contribuir
 
 1. Crie uma branch a partir da `main`: `funcionalidade/nome-da-tarefa`
 2. Faça commits pequenos e com mensagens claras, em português
 3. Abra um Pull Request para a `main` e preencha o checklist do template
-4. Atualize o [Plano de Execução](https://claude.ai/artifact/K1DiyxEiQdNSsdgbUCeeNg) marcando as tarefas concluídas
+4. Atualize o [Plano de Execução](PLANO_DE_EXECUCAO.md) marcando as tarefas concluídas
 5. Uma pessoa da mesma área revisa e aprova antes do merge
 
 ## Integrantes
