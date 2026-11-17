@@ -1,12 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AppStackParamList, Fiado } from '../types';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { Fiado } from '../types';
 import { api } from '../services/api';
 import { colors } from '../theme/colors';
-
-type Props = NativeStackScreenProps<AppStackParamList, 'ListaFiados'>;
 
 const formatarMoeda = (valor: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
@@ -16,13 +13,18 @@ const formatarData = (data: string) => {
   return ano && mes && dia ? `${dia}/${mes}/${ano}` : data;
 };
 
-export function ListaFiadosScreen({ navigation }: Props) {
+export function ListaFiadosScreen() {
+  const router = useRouter();
   const [fiados, setFiados] = useState<Fiado[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [atualizando, setAtualizando] = useState(false);
 
   const carregarFiados = useCallback(async (atualizacao = false) => {
-    atualizacao ? setAtualizando(true) : setCarregando(true);
+    if (atualizacao) {
+      setAtualizando(true);
+    } else {
+      setCarregando(true);
+    }
     try {
       const resposta = await api.get<Fiado[]>('/fiados');
       setFiados(resposta.data);
@@ -90,7 +92,10 @@ export function ListaFiadosScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.resumo}><Text style={styles.resumoLabel}>Total a receber</Text><Text style={styles.resumoValor}>{formatarMoeda(totalDevido)}</Text></View>
-      <Pressable style={styles.botaoNovo} onPress={() => navigation.navigate('FormularioFiado', {})}><Text style={styles.textoBotaoNovo}>Adicionar novo fiado</Text></Pressable>
+      <View style={styles.acoesTopo}>
+        <Pressable style={styles.botaoNovo} onPress={() => router.push('/formulario')}><Text style={styles.textoBotaoNovo}>Adicionar novo fiado</Text></Pressable>
+        <Pressable style={styles.botaoPerfil} onPress={() => router.push('/perfil')}><Text style={styles.textoBotaoPerfil}>Perfil / Sair</Text></Pressable>
+      </View>
       {carregando ? <ActivityIndicator style={styles.carregando} size="large" color={colors.primary} /> : (
         <FlatList
           data={fiados}
@@ -110,8 +115,11 @@ const styles = StyleSheet.create({
   resumo: { padding: 20, borderRadius: 12, backgroundColor: colors.primary, marginBottom: 12 },
   resumoLabel: { color: colors.surface, fontSize: 15 },
   resumoValor: { color: colors.surface, fontSize: 28, fontWeight: 'bold', marginTop: 4 },
-  botaoNovo: { alignItems: 'center', backgroundColor: colors.primaryDark, borderRadius: 8, padding: 14, marginBottom: 16 },
+  acoesTopo: { flexDirection: 'row', gap: 8, marginBottom: 16 },
+  botaoNovo: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primaryDark, borderRadius: 8, padding: 14 },
   textoBotaoNovo: { color: colors.surface, fontSize: 16, fontWeight: 'bold' },
+  botaoPerfil: { alignItems: 'center', justifyContent: 'center', borderColor: colors.primaryDark, borderWidth: 1, borderRadius: 8, paddingHorizontal: 12 },
+  textoBotaoPerfil: { color: colors.primaryDark, fontSize: 14, fontWeight: 'bold' },
   carregando: { flex: 1 },
   lista: { gap: 12, paddingBottom: 16 },
   listaVazia: { flexGrow: 1, justifyContent: 'center', alignItems: 'center' },
