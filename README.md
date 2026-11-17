@@ -49,10 +49,14 @@ Pacotes do back-end (`backend/src/main/java/br/com/senac/cadernetafiado`):
 
 | Pacote | Conteúdo |
 | --- | --- |
-| `modelo` | Entidades JPA (`Usuario`, `Fiado`) |
-| `repositorio` | Interfaces Spring Data (`UsuarioRepositorio`, `FiadoRepositorio`) |
-| `seguranca` | Autenticação JWT: `JwtService`, `JwtFiltro`, `ConfiguracaoSeguranca`, `UsuarioDetalhes` |
-| `configuracao` | Dados de exemplo para a demonstração (`DadosExemplo`) |
+| `model` | Entidades JPA (`Usuario`, `Fiado`) |
+| `repository` | Interfaces Spring Data (`UsuarioRepository`, `FiadoRepository`) |
+| `service` | Regras de negócio (`FiadoService`, `AutenticacaoService`) |
+| `controller` | Camada HTTP (`AuthController`, `UsuarioController`, `FiadoController`) |
+| `dto` | Objetos de entrada e saída da API |
+| `exception` | Exceções de domínio e `GlobalExceptionHandler` |
+| `security` | Autenticação JWT: `JwtService`, `JwtFiltro`, `UsuarioDetalhes` |
+| `config` | `SecurityConfig` e dados de exemplo (`DadosExemplo`) |
 
 ## Modelo de dados
 
