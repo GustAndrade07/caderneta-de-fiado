@@ -47,7 +47,7 @@ class AutenticacaoTestes {
     }
 
     @Test
-    void cadastroValidoArmazenaSenhaCriptografadaESemExporHash() throws Exception {
+    void cadastroComSenhaNoTamanhoMinimoArmazenaSenhaCriptografadaESemExporHash() throws Exception {
         mvc.perform(post("/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -62,6 +62,16 @@ class AutenticacaoTestes {
         Usuario usuario = usuarioRepository.buscarPorEmail(EMAIL).orElseThrow();
         assertThat(usuario.getSenha()).isNotEqualTo(SENHA);
         assertThat(codificadorDeSenha.matches(SENHA, usuario.getSenha())).isTrue();
+    }
+
+    @Test
+    void cadastroComSenhaAcimaDoMinimoEValido() throws Exception {
+        mvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"nome":"Ana Silva","email":"ana@caderneta.com","senha":"senha1234"}
+                        """))
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -89,6 +99,28 @@ class AutenticacaoTestes {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.mensagem").isNotEmpty());
+    }
+
+    @Test
+    void cadastroComSenhaAbaixoDoMinimoRetornaBadRequest() throws Exception {
+        mvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"nome":"Ana Silva","email":"ana@caderneta.com","senha":"senha12"}
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    void cadastroComSenhaVaziaRetornaBadRequest() throws Exception {
+        mvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"nome":"Ana Silva","email":"ana@caderneta.com","senha":""}
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
@@ -148,6 +180,7 @@ class AutenticacaoTestes {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value(EMAIL))
                 .andExpect(jsonPath("$.nome").value("Ana Silva"));
+    
     }
 
     @Test
