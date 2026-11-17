@@ -1,7 +1,11 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "Caderneta de Fiado",
+    "slug": "caderneta-de-fiado",
+    "owner": "gustandrade07s-team",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "scheme": "caderneta-fiado",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -26,6 +30,19 @@
       "expo-secure-store",
       "expo-router",
       "expo-status-bar"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "e00a5e6e-01ce-419c-bfc9-e6e667fbcea3"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e00a5e6e-01ce-419c-bfc9-e6e667fbcea3"
+    }
   }
 }
