@@ -155,16 +155,16 @@ Antes de começar a programar, os 4 do front decidem juntos as stacks pendentes 
 
 - [x] Criar o projeto Expo e a estrutura de pastas (`screens`, `services`, `context`, `theme`)
   PR: [#10 Base do app](https://github.com/GustAndrade07/caderneta-de-fiado/pull/10) (pastas `screens`, `services`, `contexts`, `routes`, `theme` e `types`, em TypeScript).
-- [ ] Navegação: telas de Login e Cadastro quando deslogado; abas Fiados e Perfil quando logado; Detalhe e Formulário na pilha
-  Parcial no PR #10: rotas públicas e privadas funcionam, mas o app logado usa só uma pilha. Faltam as abas Fiados e Perfil.
-- [ ] Estado do login (`AuthContext` ou equivalente): `login`, `logout`, `usuario`, `carregando`
-  Parcial no PR #10: o `AuthContext` expõe `token`, `loading`, `signIn` e `signOut`. Falta o `usuario`.
-- [ ] Token no `expo-secure-store`; nome do usuário e último filtro no AsyncStorage; manter o login ao reabrir o app
-  Parcial: token no SecureStore e login mantido ao reabrir (PR #10); último filtro no AsyncStorage (PR [#19](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19)). Falta salvar o nome do usuário no AsyncStorage.
+- [x] Navegação: telas de Login e Cadastro quando deslogado; abas Fiados e Perfil quando logado; Detalhe e Formulário na pilha
+  Rotas públicas e privadas no PR #10. Abas Fiados e Perfil (grupo `(tabs)` do Expo Router), com Detalhe e Formulário na pilha por cima, no PR [#20 Abas, usuário no AuthContext e espaçamentos no tema](https://github.com/GustAndrade07/caderneta-de-fiado/pull/20).
+- [x] Estado do login (`AuthContext` ou equivalente): `login`, `logout`, `usuario`, `carregando`
+  `token`, `loading`, `signIn` e `signOut` no PR #10; `usuario` no PR [#20](https://github.com/GustAndrade07/caderneta-de-fiado/pull/20).
+- [x] Token no `expo-secure-store`; nome do usuário e último filtro no AsyncStorage; manter o login ao reabrir o app
+  Token no SecureStore e login mantido ao reabrir (PR #10); último filtro no AsyncStorage (PR [#19](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19)); dados do usuário (nome e e-mail) no AsyncStorage, apagados no logout (PR [#20](https://github.com/GustAndrade07/caderneta-de-fiado/pull/20)).
 - [x] Serviço de API: URL base, envio do token em toda requisição, checagem de `response.ok`, timeout, logout automático em 401
   URL base (`EXPO_PUBLIC_API_URL`), token em toda requisição e logout automático em 401 no PR #10; o axios já rejeita respostas fora de 2xx (equivale ao `response.ok`). Timeout de 10 s (`timeout: 10000` em `services/api.ts`) entrou pelo PR [#15 Login e cadastro](https://github.com/GustAndrade07/caderneta-de-fiado/pull/15).
-- [ ] Tema centralizado (cores e espaçamentos)
-  Parcial no PR #10: cores centralizadas em `theme/colors.ts`. Faltam os espaçamentos.
+- [x] Tema centralizado (cores e espaçamentos)
+  Cores em `theme/colors.ts` no PR #10; `spacing` e `radius` no mesmo arquivo pelo PR [#20](https://github.com/GustAndrade07/caderneta-de-fiado/pull/20). As telas ainda usam valores fixos em vez dessas escalas.
 - [ ] Dar suporte aos outros 3 do front
 
 **Estudar:** como funciona a navegação em pilha e em abas, Context e `useContext`, a diferença entre SecureStore e AsyncStorage e por que o token não fica no AsyncStorage.
@@ -214,13 +214,13 @@ Antes de começar a programar, os 4 do front decidem juntos as stacks pendentes 
 
 **Estudar:** como a tela recebe parâmetros pela navegação (`route.params`), a diferença entre POST e PUT, o que o logout apaga e por quê.
 
-## Situação em 16/11/2026 (atualizada à noite)
+## Situação em 17/11/2026
 
-Resumo do que já está na `main` (ou no PR #19, aguardando revisão):
+Resumo do que já está na `main` (até o PR #20):
 
-- **Back-end:** API completa e protegida por JWT (cadastro, login, perfil, CRUD de fiados, total devido, erros em JSON), senha com mínimo de 8 caracteres, banco SQLite com dados de exemplo, testes automáticos e evidência do teste 401/200. O PR #19 corrige o CORS, que bloqueava o app na web. Falta a coleção do Insomnia/Postman com todos os endpoints de `/fiados` (Pedro).
-- **Front-end:** todas as telas prontas e integradas com a API: Login, Cadastro, Lista (com filtro salvo no AsyncStorage), Detalhe, Formulário e Perfil, com timeout e logout em 401. Faltam as abas Fiados e Perfil, o `usuario` no `AuthContext`, o nome do usuário no AsyncStorage e os espaçamentos no tema (João Pedro). O botão Sair na web foi corrigido no PR #19.
-- **Documentação:** README completo, com back e front (tecnologias, pastas, execução e Node 22.13+), atualizado no PR #19.
+- **Back-end:** API completa e protegida por JWT (cadastro, login, perfil, CRUD de fiados, total devido, erros em JSON), senha com mínimo de 8 caracteres, CORS liberado para o app web, banco SQLite com dados de exemplo, 53 testes automáticos passando e evidência do teste 401/200. Falta a coleção do Insomnia/Postman com todos os endpoints de `/fiados` (Pedro).
+- **Front-end:** completo. Login, Cadastro, abas Fiados e Perfil, Lista (com filtro salvo no AsyncStorage), Detalhe e Formulário, integrados com a API, com token no SecureStore, usuário no `AuthContext` e no AsyncStorage, timeout e logout em 401. Funciona no celular e na web.
+- **Documentação:** README completo, com back e front (tecnologias, pastas, execução e Node 22.13+).
 
 ## Cronograma
 
@@ -269,8 +269,8 @@ O professor escolhe qualquer integrante e a nota depende da resposta. Todos prec
 - [x] RM dos 8 integrantes, para o README — Gustavo coleta
 - [x] Stacks do back decididas e registradas no README — Gustavo, Leandro, Pedro, Ryan, até 13/11
   Registradas na tabela de tecnologias do README (Java 21, Maven, jjwt, Lombok, DTOs). Swagger não foi adotado.
-- [ ] Stacks do front decididas e registradas no README — João Pedro, Nicolas, Vinicius, Eduardo, até 13/11
-  O código já usa TypeScript, React Navigation, axios e Context API, mas o README ainda diz "demais escolhas a definir pela equipe de front".
+- [x] Stacks do front decididas e registradas no README — João Pedro, Nicolas, Vinicius, Eduardo, até 13/11
+  Registradas na tabela de tecnologias do README pelo PR [#19](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19): TypeScript, Expo Router, Context API, axios, SecureStore, AsyncStorage e estilo próprio.
 - [x] Confirmar o número de informalidade no site do IBGE — Gustavo
   README traz 37,5% (trimestre encerrado em setembro de 2026) com link para o release do IBGE.
 
