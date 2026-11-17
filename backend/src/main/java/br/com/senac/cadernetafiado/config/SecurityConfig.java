@@ -71,7 +71,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource origensLiberadas(@Value("${app.jwt.origens-liberadas:*}") String origens) {
+    CorsConfigurationSource corsConfigurationSource(@Value("${app.jwt.origens-liberadas:*}") String origens) {
         List<String> lista = Arrays.stream(origens.split(","))
                 .map(String::trim)
                 .filter(origem -> !origem.isEmpty())

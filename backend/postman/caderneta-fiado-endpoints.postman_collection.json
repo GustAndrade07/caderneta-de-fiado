@@ -1,0 +1,494 @@
+{
+  "info": {
+    "name": "Caderneta de Fiado - Endpoints /fiados",
+    "description": "Roda em ordem (Collection Runner). O login guarda o token, o POST guarda o fiadoId e o DELETE limpa o que foi criado. Usuario: demo@caderneta.com / senha123 (dados de exemplo).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "email",
+      "value": "demo@caderneta.com"
+    },
+    {
+      "key": "senha",
+      "value": "senha123"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "fiadoId",
+      "value": ""
+    },
+    {
+      "key": "totalAntes",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - POST /auth/login (200, guarda o token)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const corpo = pm.response.json();",
+              "pm.test('devolve token e tipo Bearer', () => { pm.expect(corpo.token).to.be.a('string').and.not.empty; pm.expect(corpo.tipo).to.eql('Bearer'); });",
+              "pm.collectionVariables.set('token', corpo.token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"senha\": \"{{senha}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      }
+    },
+    {
+      "name": "02 - GET /fiados SEM token (401)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 401', () => pm.response.to.have.status(401));",
+              "pm.test('erro nao_autorizado', () => pm.expect(pm.response.json().erro).to.eql('nao_autorizado'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fiados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      }
+    },
+    {
+      "name": "03 - POST /fiados criar (201)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));",
+              "const f = pm.response.json();",
+              "pm.test('campos devolvidos', () => { pm.expect(f.id).to.be.a('number'); pm.expect(f.nomeCliente).to.eql('Cliente Postman'); pm.expect(f.valor).to.eql(100); pm.expect(f.data).to.eql('2026-11-10'); });",
+              "pm.test('nasce nao pago', () => pm.expect(f.pago).to.eql(false));",
+              "pm.test('nao expoe o usuario', () => pm.expect(f).to.not.have.property('usuario'));",
+              "pm.collectionVariables.set('fiadoId', f.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/fiados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nomeCliente\": \"Cliente Postman\",\n  \"valor\": 100,\n  \"data\": \"2026-11-10\",\n  \"descricao\": \"Criado pelo teste do Postman\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "04 - POST /fiados invalido (400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 400', () => pm.response.to.have.status(400));",
+              "pm.test('erro dados_invalidos', () => pm.expect(pm.response.json().erro).to.eql('dados_invalidos'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/fiados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nomeCliente\": \"\",\n  \"valor\": -5,\n  \"data\": \"2026-11-10\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "05 - GET /fiados listar (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const lista = pm.response.json();",
+              "pm.test('e uma lista', () => pm.expect(lista).to.be.an('array'));",
+              "pm.test('contem o fiado criado', () => pm.expect(lista.some(f => f.id === Number(pm.collectionVariables.get('fiadoId')))).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fiados",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados"
+          ]
+        }
+      }
+    },
+    {
+      "name": "06 - GET /fiados/{id} buscar (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('mesmo id', () => pm.expect(pm.response.json().id).to.eql(Number(pm.collectionVariables.get('fiadoId'))));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fiados/{{fiadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados",
+            "{{fiadoId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "07 - GET /fiados/999999 inexistente (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 404', () => pm.response.to.have.status(404));",
+              "pm.test('erro nao_encontrado', () => pm.expect(pm.response.json().erro).to.eql('nao_encontrado'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fiados/999999",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados",
+            "999999"
+          ]
+        }
+      }
+    },
+    {
+      "name": "08 - PUT /fiados/{id} editar (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const f = pm.response.json();",
+              "pm.test('dados atualizados', () => { pm.expect(f.nomeCliente).to.eql('Cliente Postman Editado'); pm.expect(f.valor).to.eql(150); pm.expect(f.data).to.eql('2026-11-12'); });",
+              "pm.test('continua nao pago', () => pm.expect(f.pago).to.eql(false));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/fiados/{{fiadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados",
+            "{{fiadoId}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nomeCliente\": \"Cliente Postman Editado\",\n  \"valor\": 150,\n  \"data\": \"2026-11-12\",\n  \"descricao\": \"Editado pelo teste do Postman\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "09 - GET /fiados/total antes de pagar (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const total = pm.response.json().totalDevido;",
+              "pm.test('totalDevido e numero e inclui os 150 do fiado', () => { pm.expect(total).to.be.a('number'); pm.expect(total).to.be.at.least(150); });",
+              "pm.collectionVariables.set('totalAntes', total);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fiados/total",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados",
+            "total"
+          ]
+        }
+      }
+    },
+    {
+      "name": "10 - PATCH /fiados/{id}/pagar (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "pm.test('marcado como pago', () => pm.expect(pm.response.json().pago).to.eql(true));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fiados/{{fiadoId}}/pagar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados",
+            "{{fiadoId}}",
+            "pagar"
+          ]
+        }
+      }
+    },
+    {
+      "name": "11 - GET /fiados/total depois de pagar (200, diminui 150)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const antes = Number(pm.collectionVariables.get('totalAntes'));",
+              "const depois = pm.response.json().totalDevido;",
+              "pm.test('total diminuiu o valor do fiado pago', () => pm.expect(Math.abs((antes - depois) - 150)).to.be.below(0.001));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fiados/total",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados",
+            "total"
+          ]
+        }
+      }
+    },
+    {
+      "name": "12 - DELETE /fiados/{id} excluir (204)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 204', () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fiados/{{fiadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados",
+            "{{fiadoId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "13 - GET /fiados/{id} apos excluir (404)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 404', () => pm.response.to.have.status(404));",
+              "pm.test('erro nao_encontrado', () => pm.expect(pm.response.json().erro).to.eql('nao_encontrado'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/fiados/{{fiadoId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "fiados",
+            "{{fiadoId}}"
+          ]
+        }
+      }
+    }
+  ]
+}
