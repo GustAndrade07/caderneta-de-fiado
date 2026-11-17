@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 import { authService } from '../services/authService';
 import { Usuario } from '../types';
 import { colors } from '../theme/colors';
+import { confirmar } from '../utils/confirmar';
 
 export function PerfilScreen() {
   const { signOut } = useAuth();
@@ -28,11 +29,8 @@ export function PerfilScreen() {
   useFocusEffect(useCallback(() => { void carregarPerfil(); }, [carregarPerfil]));
 
   // O logout apaga o token do SecureStore e zera o estado do login: o app volta para a tela de Login.
-  const confirmarSaida = () => Alert.alert(
-    'Sair da conta',
-    'Deseja realmente sair?',
-    [{ text: 'Cancelar', style: 'cancel' }, { text: 'Sair', style: 'destructive', onPress: () => void signOut() }],
-  );
+  // confirmar() usa window.confirm na web, onde o Alert.alert com botões não aparece.
+  const confirmarSaida = () => confirmar('Sair da conta', 'Deseja realmente sair?', 'Sair', () => void signOut());
 
   const iniciais = usuario?.nome
     ? usuario.nome.trim().split(/\s+/).slice(0, 2).map((parte) => parte[0]?.toUpperCase() ?? '').join('')

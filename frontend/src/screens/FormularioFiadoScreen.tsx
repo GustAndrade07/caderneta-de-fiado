@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -15,6 +14,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Fiado } from '../types';
 import { api } from '../services/api';
 import { colors } from '../theme/colors';
+import { avisar } from '../utils/confirmar';
 
 type Erros = { nomeCliente?: string; valor?: string; data?: string };
 
@@ -83,7 +83,7 @@ export function FormularioFiadoScreen() {
       .catch((erro: any) => {
         // 401 já é tratado pelo interceptador do axios (volta para o login).
         if (ativo && erro?.response?.status !== 401) {
-          Alert.alert('Não foi possível carregar o fiado', 'Tente novamente em alguns instantes.');
+          avisar('Não foi possível carregar o fiado', 'Tente novamente em alguns instantes.');
           router.back();
         }
       })
@@ -134,7 +134,7 @@ export function FormularioFiadoScreen() {
       // 401 já é tratado pelo interceptador do axios (volta para o login).
       if (erro?.response?.status !== 401) {
         const mensagem = erro?.response?.data?.mensagem ?? 'Tente novamente em alguns instantes.';
-        Alert.alert('Não foi possível salvar', String(mensagem));
+        avisar('Não foi possível salvar', String(mensagem));
       }
     } finally {
       setSalvando(false);
