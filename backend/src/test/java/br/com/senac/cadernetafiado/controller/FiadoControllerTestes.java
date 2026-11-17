@@ -21,15 +21,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import br.com.senac.cadernetafiado.modelo.Usuario;
-import br.com.senac.cadernetafiado.repositorio.FiadoRepositorio;
-import br.com.senac.cadernetafiado.repositorio.UsuarioRepositorio;
-import br.com.senac.cadernetafiado.seguranca.JwtService;
+import br.com.senac.cadernetafiado.model.Usuario;
+import br.com.senac.cadernetafiado.repository.FiadoRepository;
+import br.com.senac.cadernetafiado.repository.UsuarioRepository;
+import br.com.senac.cadernetafiado.security.JwtService;
 
 @SpringBootTest(properties = "spring.datasource.url=jdbc:sqlite::memory:")
 @AutoConfigureMockMvc
 class FiadoControllerTestes {
-
     private static final String EMAIL_A = "a.fiado@caderneta.com";
     private static final String EMAIL_B = "b.fiado@caderneta.com";
     private static final String CORPO = """
@@ -40,18 +39,18 @@ class FiadoControllerTestes {
     @Autowired
     private JwtService jwt;
     @Autowired
-    private UsuarioRepositorio usuarioRepositorio;
+    private UsuarioRepository usuarioRepository;
     @Autowired
-    private FiadoRepositorio fiadoRepositorio;
+    private FiadoRepository fiadoRepository;
     @Autowired
     private PasswordEncoder codificador;
 
     @BeforeEach
     void preparar() {
-        fiadoRepositorio.deleteAll();
+        fiadoRepository.deleteAll();
         for (String email : new String[] { EMAIL_A, EMAIL_B }) {
-            if (!usuarioRepositorio.existePorEmail(email)) {
-                usuarioRepositorio.save(new Usuario("Teste", email, codificador.encode("senha123")));
+            if (!usuarioRepository.existePorEmail(email)) {
+                usuarioRepository.save(new Usuario("Teste", email, codificador.encode("senha123")));
             }
         }
     }
@@ -116,7 +115,7 @@ class FiadoControllerTestes {
         mvc.perform(como(json(put("/fiados/" + id), CORPO), EMAIL_B)).andExpect(status().isNotFound());
         mvc.perform(como(delete("/fiados/" + id), EMAIL_B)).andExpect(status().isNotFound());
         mvc.perform(como(patch("/fiados/" + id + "/pagar"), EMAIL_B)).andExpect(status().isNotFound());
-        // continua intacto para o dono
+
         mvc.perform(como(get("/fiados/" + id), EMAIL_A))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pago").value(false));
