@@ -1,17 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AppStackParamList } from '../types';
 import { colors } from '../theme/colors';
 
-type Props = NativeStackScreenProps<AppStackParamList, 'FormularioFiado'>;
-
-export function FormularioFiadoScreen({ route }: Props) {
-  const fiadoEdicao = route.params?.fiado;
-
+export function FormularioFiadoScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{fiadoEdicao ? 'Editar Fiado' : 'Novo Fiado'}</Text>
+      <Text style={styles.title}>Novo Fiado</Text>
       <Text style={styles.subtitle}>Tela base pronta para implementação (Eduardo)</Text>
     </View>
   );
