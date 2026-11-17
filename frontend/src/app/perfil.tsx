@@ -1,1 +1,0 @@
-export { PerfilScreen as default } from '../screens/PerfilScreen';
