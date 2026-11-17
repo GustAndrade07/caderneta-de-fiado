@@ -176,9 +176,9 @@ Antes de começar a programar, os 4 do front decidem juntos as stacks pendentes 
 - [x] Total devido no topo, somando os fiados não pagos
   PR: [#11 Tela de lista de fiados com total devido, pagamento e exclusão](https://github.com/GustAndrade07/caderneta-de-fiado/pull/11)
 - [x] Filtro todos/pendentes/pagos, salvo no AsyncStorage
-  Feito por Gustavo na branch `funcionalidade/detalhe-e-filtros`.
+  PR: [#19 Tela de detalhe e filtro de fiados salvo no AsyncStorage](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19) (feito por Gustavo)
 - [x] Tela de detalhe: botões de editar, marcar como pago e excluir (com confirmação)
-  Feito por Gustavo na branch `funcionalidade/detalhe-e-filtros`. A lista abre o detalhe ao tocar no card e também tem botão Editar.
+  PR: [#19 Tela de detalhe e filtro de fiados salvo no AsyncStorage](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19) (feito por Gustavo). A lista abre o detalhe ao tocar no card e também tem botão Editar.
 - [x] Atualizar a lista sem `push`: usar `map` e `filter`
   PR: [#11 Tela de lista de fiados com total devido, pagamento e exclusão](https://github.com/GustAndrade07/caderneta-de-fiado/pull/11)
 
