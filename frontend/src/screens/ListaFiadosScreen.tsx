@@ -1,16 +1,23 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Fiado } from '../types';
 import { api } from '../services/api';
+import { FiltroFiados, filtroStorage } from '../services/filtroStorage';
 import { colors } from '../theme/colors';
+import { formatarData, formatarMoeda } from '../utils/formatadores';
+import { avisar, confirmar } from '../utils/confirmar';
 
-const formatarMoeda = (valor: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+const OPCOES_FILTRO: { valor: FiltroFiados; rotulo: string }[] = [
+  { valor: 'todos', rotulo: 'Todos' },
+  { valor: 'pendentes', rotulo: 'Pendentes' },
+  { valor: 'pagos', rotulo: 'Pagos' },
+];
 
-const formatarData = (data: string) => {
-  const [ano, mes, dia] = data.split('-');
-  return ano && mes && dia ? `${dia}/${mes}/${ano}` : data;
+const MENSAGEM_VAZIA: Record<FiltroFiados, string> = {
+  todos: 'Nenhum fiado registrado.',
+  pendentes: 'Nenhum fiado pendente.',
+  pagos: 'Nenhum fiado pago.',
 };
 
 export function ListaFiadosScreen() {
@@ -18,6 +25,17 @@ export function ListaFiadosScreen() {
   const [fiados, setFiados] = useState<Fiado[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [atualizando, setAtualizando] = useState(false);
+  const [filtro, setFiltro] = useState<FiltroFiados>('todos');
+
+  // Recupera o último filtro escolhido (salvo no AsyncStorage).
+  useEffect(() => {
+    void filtroStorage.get().then(setFiltro);
+  }, []);
+
+  const escolherFiltro = (novoFiltro: FiltroFiados) => {
+    setFiltro(novoFiltro);
+    void filtroStorage.set(novoFiltro);
+  };
 
   const carregarFiados = useCallback(async (atualizacao = false) => {
     if (atualizacao) {
@@ -28,8 +46,11 @@ export function ListaFiadosScreen() {
     try {
       const resposta = await api.get<Fiado[]>('/fiados');
       setFiados(resposta.data);
-    } catch {
-      Alert.alert('Não foi possível carregar', 'Tente novamente em alguns instantes.');
+    } catch (erro: any) {
+      // 401 já é tratado pelo interceptador do axios (volta para o login).
+      if (erro?.response?.status !== 401) {
+        avisar('Não foi possível carregar', 'Tente novamente em alguns instantes.');
+      }
     } finally {
       setCarregando(false);
       setAtualizando(false);
@@ -43,12 +64,20 @@ export function ListaFiadosScreen() {
     [fiados],
   );
 
+  const fiadosFiltrados = useMemo(() => {
+    if (filtro === 'pendentes') return fiados.filter((fiado) => !fiado.pago);
+    if (filtro === 'pagos') return fiados.filter((fiado) => fiado.pago);
+    return fiados;
+  }, [fiados, filtro]);
+
   const marcarComoPago = async (fiado: Fiado) => {
     try {
       const resposta = await api.patch<Fiado>(`/fiados/${fiado.id}/pagar`);
       setFiados((itens) => itens.map((item) => (item.id === fiado.id ? resposta.data : item)));
-    } catch {
-      Alert.alert('Não foi possível atualizar', 'Tente marcar o fiado como pago novamente.');
+    } catch (erro: any) {
+      if (erro?.response?.status !== 401) {
+        avisar('Não foi possível atualizar', 'Tente marcar o fiado como pago novamente.');
+      }
     }
   };
 
@@ -56,19 +85,28 @@ export function ListaFiadosScreen() {
     try {
       await api.delete(`/fiados/${id}`);
       setFiados((itens) => itens.filter((item) => item.id !== id));
-    } catch {
-      Alert.alert('Não foi possível excluir', 'Tente excluir o fiado novamente.');
+    } catch (erro: any) {
+      if (erro?.response?.status !== 401) {
+        avisar('Não foi possível excluir', 'Tente excluir o fiado novamente.');
+      }
     }
   };
 
-  const confirmarExclusao = (fiado: Fiado) => Alert.alert(
+  const confirmarExclusao = (fiado: Fiado) => confirmar(
     'Excluir fiado',
     `Deseja excluir o fiado de ${fiado.nomeCliente}?`,
-    [{ text: 'Cancelar', style: 'cancel' }, { text: 'Excluir', style: 'destructive', onPress: () => void excluirFiado(fiado.id) }],
+    'Excluir',
+    () => void excluirFiado(fiado.id),
   );
 
+  const abrirDetalhe = (fiado: Fiado) =>
+    router.push({ pathname: '/detalhe/[id]', params: { id: String(fiado.id) } });
+
+  const abrirEdicao = (fiado: Fiado) =>
+    router.push({ pathname: '/formulario', params: { id: String(fiado.id) } });
+
   const renderItem = ({ item }: { item: Fiado }) => (
-    <View style={styles.card}>
+    <Pressable style={styles.card} onPress={() => abrirDetalhe(item)} accessibilityRole="button" accessibilityHint="Abre os detalhes do fiado">
       <View style={styles.cardHeader}>
         <Text style={styles.nomeCliente}>{item.nomeCliente}</Text>
         <Text style={styles.valor}>{formatarMoeda(item.valor)}</Text>
@@ -84,9 +122,10 @@ export function ListaFiadosScreen() {
       {item.descricao ? <Text style={styles.descricao}>{item.descricao}</Text> : null}
       <View style={styles.acoesCard}>
         {!item.pago ? <Pressable style={styles.botaoPago} onPress={() => void marcarComoPago(item)}><Text style={styles.textoBotaoPago}>Marcar como pago</Text></Pressable> : null}
+        <Pressable style={styles.botaoEditar} onPress={() => abrirEdicao(item)}><Text style={styles.textoBotaoEditar}>Editar</Text></Pressable>
         <Pressable style={styles.botaoExcluir} onPress={() => confirmarExclusao(item)}><Text style={styles.textoBotaoExcluir}>Excluir</Text></Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 
   return (
@@ -96,14 +135,30 @@ export function ListaFiadosScreen() {
         <Pressable style={styles.botaoNovo} onPress={() => router.push('/formulario')}><Text style={styles.textoBotaoNovo}>Adicionar novo fiado</Text></Pressable>
         <Pressable style={styles.botaoPerfil} onPress={() => router.push('/perfil')}><Text style={styles.textoBotaoPerfil}>Perfil / Sair</Text></Pressable>
       </View>
+      <View style={styles.filtros} accessibilityRole="tablist">
+        {OPCOES_FILTRO.map((opcao) => {
+          const ativo = filtro === opcao.valor;
+          return (
+            <Pressable
+              key={opcao.valor}
+              style={[styles.filtro, ativo ? styles.filtroAtivo : null]}
+              onPress={() => escolherFiltro(opcao.valor)}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: ativo }}
+            >
+              <Text style={[styles.textoFiltro, ativo ? styles.textoFiltroAtivo : null]}>{opcao.rotulo}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
       {carregando ? <ActivityIndicator style={styles.carregando} size="large" color={colors.primary} /> : (
         <FlatList
-          data={fiados}
+          data={fiadosFiltrados}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
-          contentContainerStyle={fiados.length ? styles.lista : styles.listaVazia}
+          contentContainerStyle={fiadosFiltrados.length ? styles.lista : styles.listaVazia}
           refreshControl={<RefreshControl refreshing={atualizando} onRefresh={() => void carregarFiados(true)} colors={[colors.primary]} />}
-          ListEmptyComponent={<Text style={styles.vazio}>Nenhum fiado registrado.</Text>}
+          ListEmptyComponent={<Text style={styles.vazio}>{MENSAGEM_VAZIA[filtro]}</Text>}
         />
       )}
     </View>
@@ -120,6 +175,11 @@ const styles = StyleSheet.create({
   textoBotaoNovo: { color: colors.surface, fontSize: 16, fontWeight: 'bold' },
   botaoPerfil: { alignItems: 'center', justifyContent: 'center', borderColor: colors.primaryDark, borderWidth: 1, borderRadius: 8, paddingHorizontal: 12 },
   textoBotaoPerfil: { color: colors.primaryDark, fontSize: 14, fontWeight: 'bold' },
+  filtros: { flexDirection: 'row', gap: 8, marginBottom: 16 },
+  filtro: { flex: 1, alignItems: 'center', borderColor: colors.border, borderRadius: 20, borderWidth: 1, backgroundColor: colors.surface, paddingVertical: 8 },
+  filtroAtivo: { backgroundColor: colors.primary, borderColor: colors.primary },
+  textoFiltro: { color: colors.textSecondary, fontSize: 14, fontWeight: '600' },
+  textoFiltroAtivo: { color: colors.surface },
   carregando: { flex: 1 },
   lista: { gap: 12, paddingBottom: 16 },
   listaVazia: { flexGrow: 1, justifyContent: 'center', alignItems: 'center' },
@@ -140,6 +200,8 @@ const styles = StyleSheet.create({
   acoesCard: { flexDirection: 'row', gap: 12, marginTop: 16 },
   botaoPago: { alignItems: 'center', backgroundColor: colors.success, borderRadius: 6, flex: 1, padding: 10 },
   textoBotaoPago: { color: colors.surface, fontWeight: 'bold' },
+  botaoEditar: { alignItems: 'center', borderColor: colors.primaryDark, borderRadius: 6, borderWidth: 1, padding: 10 },
+  textoBotaoEditar: { color: colors.primaryDark, fontWeight: 'bold' },
   botaoExcluir: { alignItems: 'center', borderColor: colors.danger, borderRadius: 6, borderWidth: 1, padding: 10 },
   textoBotaoExcluir: { color: colors.danger, fontWeight: 'bold' },
 });
