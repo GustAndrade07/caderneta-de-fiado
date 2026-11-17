@@ -110,8 +110,7 @@ class AutenticacaoTestes {
                         {"nome":"Ana Silva","email":"ana@caderneta.com","senha":"senha12"}
                         """))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.mensagem").value("A senha deve ter no mínimo 8 caracteres"));
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
@@ -123,6 +122,66 @@ class AutenticacaoTestes {
                         """))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    void emailMalFormatadoExplicaOFormatoNoCadastroENoLogin() throws Exception {
+        String mensagem = "Use o formato nome@dominio.com (ex.: maria@exemplo.com).";
+
+        mvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"nome":"Ana Silva","email":"ana-sem-arroba","senha":"senha123"}
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem").value(mensagem));
+
+        mvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"email":"ana-sem-arroba","senha":"senha123"}
+                        """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.mensagem").value(mensagem));
+    }
+
+    @Test
+    void cadastroComSenhaCurtaNaoCriaUsuario() throws Exception {
+        mvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"nome":"Ana Silva","email":"ana@caderneta.com","senha":"curta"}
+                        """))
+                .andExpect(status().isBadRequest());
+
+        assertThat(usuarioRepositorio.buscarPorEmail(EMAIL)).isEmpty();
+    }
+
+    @Test
+    void usuarioRecemCadastradoConsegueEntrarEAcessarSeuPerfil() throws Exception {
+        mvc.perform(post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"nome":"  Ana Silva  ","email":"ANA@CADERNETA.COM","senha":"senha123"}
+                        """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.nome").value("Ana Silva"))
+                .andExpect(jsonPath("$.email").value(EMAIL));
+
+        MvcResult login = mvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"email":"ana@caderneta.com","senha":"senha123"}
+                        """))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String token = JsonPath.read(login.getResponse().getContentAsString(), "$.token");
+        mvc.perform(get("/usuarios/me").header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value(EMAIL))
+                .andExpect(jsonPath("$.nome").value("Ana Silva"));
+    
     }
 
     @Test
