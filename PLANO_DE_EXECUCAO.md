@@ -140,8 +140,8 @@ Antes de começar a programar, os 4 do back decidem juntos as stacks pendentes d
   PR: [#7 Cadastro, login e perfil do usuário](https://github.com/GustAndrade07/caderneta-de-fiado/pull/7)
 - [x] `UsuarioController`: `GET /usuarios/me`
   PR: [#7 Cadastro, login e perfil do usuário](https://github.com/GustAndrade07/caderneta-de-fiado/pull/7)
-- [ ] Recusar e-mail duplicado e senha curta
-  Parcial no PR #7: e-mail duplicado já é recusado (409). Falta validar tamanho mínimo da senha (hoje só `@NotBlank`).
+- [x] Recusar e-mail duplicado e senha curta
+  E-mail duplicado recusado (409) no PR #7. Senha com no mínimo 8 caracteres (`@Size(min = 8, max = 72)` em `CadastroUsuarioRequest`) entrou pelo PR [#15 Login e cadastro](https://github.com/GustAndrade07/caderneta-de-fiado/pull/15).
 - [x] `GlobalExceptionHandler`: mensagens de erro claras em JSON (400, 401, 404, 409)
   PR: [#7 Cadastro, login e perfil do usuário](https://github.com/GustAndrade07/caderneta-de-fiado/pull/7)
 
@@ -160,9 +160,9 @@ Antes de começar a programar, os 4 do front decidem juntos as stacks pendentes 
 - [ ] Estado do login (`AuthContext` ou equivalente): `login`, `logout`, `usuario`, `carregando`
   Parcial no PR #10: o `AuthContext` expõe `token`, `loading`, `signIn` e `signOut`. Falta o `usuario`.
 - [ ] Token no `expo-secure-store`; nome do usuário e último filtro no AsyncStorage; manter o login ao reabrir o app
-  Parcial no PR #10: token no SecureStore e login mantido ao reabrir. Falta o AsyncStorage (nome e último filtro).
-- [ ] Serviço de API: URL base, envio do token em toda requisição, checagem de `response.ok`, timeout, logout automático em 401
-  Parcial no PR #10: URL base (`EXPO_PUBLIC_API_URL`), token em toda requisição e logout automático em 401 (axios). Falta o timeout.
+  Parcial: token no SecureStore e login mantido ao reabrir (PR #10); último filtro no AsyncStorage (PR [#19](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19)). Falta salvar o nome do usuário no AsyncStorage.
+- [x] Serviço de API: URL base, envio do token em toda requisição, checagem de `response.ok`, timeout, logout automático em 401
+  URL base (`EXPO_PUBLIC_API_URL`), token em toda requisição e logout automático em 401 no PR #10; o axios já rejeita respostas fora de 2xx (equivale ao `response.ok`). Timeout de 10 s (`timeout: 10000` em `services/api.ts`) entrou pelo PR [#15 Login e cadastro](https://github.com/GustAndrade07/caderneta-de-fiado/pull/15).
 - [ ] Tema centralizado (cores e espaçamentos)
   Parcial no PR #10: cores centralizadas em `theme/colors.ts`. Faltam os espaçamentos.
 - [ ] Dar suporte aos outros 3 do front
@@ -186,30 +186,40 @@ Antes de começar a programar, os 4 do front decidem juntos as stacks pendentes 
 
 ### 7. Vinicius Soares — Login e Cadastro
 
-- [ ] Tela de login: e-mail, senha (`secureTextEntry`), botão com carregamento, mensagem de erro
-- [ ] Tela de cadastro: nome, e-mail, senha e confirmação de senha
-- [ ] Validar os campos antes de enviar e mostrar o erro que a API devolve
-- [ ] Usar `KeyboardAvoidingView` para o teclado não cobrir os campos
-- [ ] Integrar com o `login` do João Pedro e os endpoints do Ryan
+- [x] Tela de login: e-mail, senha (`secureTextEntry`), botão com carregamento, mensagem de erro
+  PR: [#15 Login e cadastro](https://github.com/GustAndrade07/caderneta-de-fiado/pull/15)
+- [x] Tela de cadastro: nome, e-mail, senha e confirmação de senha
+  PR: [#15 Login e cadastro](https://github.com/GustAndrade07/caderneta-de-fiado/pull/15)
+- [x] Validar os campos antes de enviar e mostrar o erro que a API devolve
+  PR: [#15 Login e cadastro](https://github.com/GustAndrade07/caderneta-de-fiado/pull/15)
+- [x] Usar `KeyboardAvoidingView` para o teclado não cobrir os campos
+  PR: [#15 Login e cadastro](https://github.com/GustAndrade07/caderneta-de-fiado/pull/15)
+- [x] Integrar com o `login` do João Pedro e os endpoints do Ryan
+  PR: [#15 Login e cadastro](https://github.com/GustAndrade07/caderneta-de-fiado/pull/15)
 
 **Estudar:** `TextInput` controlado, o que acontece do toque em "Entrar" até o token salvo, `async/await`.
 
 ### 8. Eduardo Campos — Formulário e Perfil
 
-- [ ] Formulário de fiado: cliente, valor, data e descrição; o mesmo formulário cria (POST) e edita (PUT)
-- [ ] Validar valor maior que zero e cliente obrigatório
-- [ ] Voltar para a lista atualizada depois de salvar
-- [ ] Tela de perfil: dados do `/usuarios/me` e botão Sair, que apaga o token do SecureStore
+- [x] Formulário de fiado: cliente, valor, data e descrição; o mesmo formulário cria (POST) e edita (PUT)
+  PR: [#14 Formulário de fiado e tela de perfil](https://github.com/GustAndrade07/caderneta-de-fiado/pull/14)
+- [x] Validar valor maior que zero e cliente obrigatório
+  PR: [#14 Formulário de fiado e tela de perfil](https://github.com/GustAndrade07/caderneta-de-fiado/pull/14)
+- [x] Voltar para a lista atualizada depois de salvar
+  PR: [#14 Formulário de fiado e tela de perfil](https://github.com/GustAndrade07/caderneta-de-fiado/pull/14)
+- [x] Tela de perfil: dados do `/usuarios/me` e botão Sair, que apaga o token do SecureStore
+  PR: [#14 Formulário de fiado e tela de perfil](https://github.com/GustAndrade07/caderneta-de-fiado/pull/14)
+- [ ] Corrigir o botão Sair na versão web: o `Alert.alert` com botões não aparece no navegador, então o logout não acontece. Usar o `confirmar()` de `utils/confirmar.ts` (PR #19).
 
 **Estudar:** como a tela recebe parâmetros pela navegação (`route.params`), a diferença entre POST e PUT, o que o logout apaga e por quê.
 
-## Situação em 16/11/2026
+## Situação em 16/11/2026 (atualizada à noite)
 
-Resumo do que já está na `main`:
+Resumo do que já está na `main` (ou no PR #19, aguardando revisão):
 
-- **Back-end:** API completa e protegida por JWT (cadastro, login, perfil, CRUD de fiados, total devido, erros em JSON), banco SQLite com dados de exemplo e testes automáticos. Faltam a validação de senha curta, a coleção do Insomnia/Postman e o print do teste de 401/200.
-- **Front-end:** base do app (navegação pública/privada, login com token no SecureStore, cliente HTTP com logout em 401, tema) e a tela de lista de fiados. Faltam as telas de Login, Cadastro, Detalhe, Formulário e Perfil, as abas, o AsyncStorage (filtro e nome do usuário) e o timeout das requisições.
-- **Documentação:** README completo, com instruções de execução do back e do front.
+- **Back-end:** API completa e protegida por JWT (cadastro, login, perfil, CRUD de fiados, total devido, erros em JSON), senha com mínimo de 8 caracteres, banco SQLite com dados de exemplo, testes automáticos e evidência do teste 401/200. O PR #19 corrige o CORS, que bloqueava o app na web. Falta a coleção do Insomnia/Postman com todos os endpoints de `/fiados` (Pedro).
+- **Front-end:** todas as telas prontas e integradas com a API: Login, Cadastro, Lista (com filtro salvo no AsyncStorage), Detalhe, Formulário e Perfil, com timeout e logout em 401. Faltam as abas Fiados e Perfil, o `usuario` no `AuthContext`, o nome do usuário no AsyncStorage e os espaçamentos no tema (João Pedro), e o botão Sair na web (Eduardo).
+- **Documentação:** README do back completo. Falta atualizar o README: ainda diz que o front "será criado" e deixa as tecnologias do front "a definir" (Gustavo).
 
 ## Cronograma
 
