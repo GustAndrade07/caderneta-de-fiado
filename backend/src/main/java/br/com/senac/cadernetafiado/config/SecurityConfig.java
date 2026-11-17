@@ -70,8 +70,9 @@ public class SecurityConfig {
         return new ProviderManager(provedor);
     }
 
+    // O nome do bean precisa ser "corsConfigurationSource" para o .cors(withDefaults()) encontrá-lo.
     @Bean
-    CorsConfigurationSource origensLiberadas(@Value("${app.jwt.origens-liberadas:*}") String origens) {
+    CorsConfigurationSource corsConfigurationSource(@Value("${app.jwt.origens-liberadas:*}") String origens) {
         List<String> lista = Arrays.stream(origens.split(","))
                 .map(String::trim)
                 .filter(origem -> !origem.isEmpty())

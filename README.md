@@ -18,15 +18,23 @@ A Caderneta de Fiado oferece a esses comerciantes uma forma simples e gratuita d
 
 - Cadastro e login de usuário com JWT
 - Cadastro, consulta, edição e exclusão de fiados
+- Tela de detalhe do fiado, com editar, marcar como pago e excluir (com confirmação)
 - Marcar um fiado como pago
 - Total devido exibido na lista
+- Filtro da lista (todos, pendentes e pagos), com a última escolha salva no aparelho
+- Perfil com os dados do usuário e botão Sair
 - Login mantido ao reabrir o app
 
 ## Tecnologias
 
 | Área | Tecnologia |
 | --- | --- |
-| Front-end | React Native (Expo) — demais escolhas a definir pela equipe de front |
+| Front-end | React Native 0.88 com Expo SDK 58, em TypeScript |
+| Navegação | Expo Router (rotas por arquivo em `frontend/src/app`), com rotas públicas e protegidas |
+| Estado | Context API (`AuthContext`) |
+| Requisições | axios, com token JWT em toda requisição, timeout de 10 s e logout automático em 401 |
+| Armazenamento no app | `expo-secure-store` para o token JWT; AsyncStorage para dados não sensíveis (último filtro da lista) |
+| Interface | Componentes do React Native com estilo próprio (`StyleSheet`) e cores centralizadas em `theme/colors.ts` |
 | Back-end | Java 21, Spring Boot 4.1.2 |
 | Build | Maven (via Maven Wrapper `mvnw`, não precisa instalar o Maven) |
 | Persistência | Spring Data JPA (Hibernate) com o dialeto SQLite do `hibernate-community-dialects` |
@@ -42,8 +50,20 @@ A Caderneta de Fiado oferece a esses comerciantes uma forma simples e gratuita d
 ```
 caderneta-de-fiado/
 ├─ backend/    API REST em Spring Boot
-└─ frontend/   App em React Native (Expo) — a ser criado pela equipe de front
+└─ frontend/   App em React Native (Expo)
 ```
+
+Pastas do front-end (`frontend/src`):
+
+| Pasta | Conteúdo |
+| --- | --- |
+| `app` | Rotas do Expo Router: `_layout.tsx` (pilha e proteção das rotas), `login`, `cadastro`, `index` (lista), `detalhe/[id]`, `formulario` e `perfil` |
+| `screens` | Telas: `LoginScreen`, `CadastroScreen`, `ListaFiadosScreen`, `DetalheFiadoScreen`, `FormularioFiadoScreen`, `PerfilScreen` |
+| `contexts` | `AuthContext`: token, carregamento, `signIn` e `signOut` |
+| `services` | Cliente HTTP (`api.ts`), autenticação, token no SecureStore e filtro no AsyncStorage |
+| `utils` | Formatação de moeda e data e confirmações que funcionam no celular e na web |
+| `theme` | Cores do app |
+| `types` | Tipos `Usuario`, `Fiado` e `AuthResponse` |
 
 Pacotes do back-end (`backend/src/main/java/br/com/senac/cadernetafiado`):
 
@@ -245,8 +265,8 @@ Sem token, a resposta é `401`. Com `-H "Authorization: Bearer <token>"`, a requ
 
 ### Pré-requisitos
 
-- **Node.js 18 ou superior** instalado
-- **Expo Go** instalado no celular (Android/iOS) ou emulador configurado no computador
+- **Node.js 22.13 ou superior** (22 ou 24 LTS) instalado — confira com `node -v`. O Expo SDK 58 não roda no Node 18 nem no 20
+- **Expo Go** instalado no celular (Android/iOS), emulador configurado no computador ou um navegador para a versão web
 
 ### Configuração da API
 
@@ -273,7 +293,7 @@ npm ci
 npx expo start --lan
 ```
 
-Abra o app no Expo Go ou no emulador. Para testar, use `demo@caderneta.com` / `senha123` ou crie uma conta. O cadastro salva o usuário em `backend/fiado.db` e entra automaticamente. Ao iniciar de novo, o app confere o token em `/usuarios/me`; mantenha `JWT_SECRET` igual entre reinícios da API para preservar a sessão.
+Abra o app no Expo Go ou no emulador. Para usar no navegador, aperte `w` no terminal do Expo (ou rode `npx expo start --web`); sem `.env.local`, a web acessa a API em `http://localhost:8080` (se o `.env.local` apontar para `10.0.2.2`, a web não conecta). Para testar, use `demo@caderneta.com` / `senha123` ou crie uma conta. O cadastro salva o usuário em `backend/fiado.db` e entra automaticamente. Ao iniciar de novo, o app confere o token em `/usuarios/me`; mantenha `JWT_SECRET` igual entre reinícios da API para preservar a sessão.
 
 ## Como contribuir
 
