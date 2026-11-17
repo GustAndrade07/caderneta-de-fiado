@@ -102,7 +102,8 @@ Antes de começar a programar, os 4 do back decidem juntos as stacks pendentes d
 - [x] README completo: problema, dados do IBGE, como rodar, integrantes com nome e RM
   PR: [#4 Documentação: README completo](https://github.com/GustAndrade07/caderneta-de-fiado/pull/4)
   Parte do Gustavo concluída (problema com dado do IBGE, tecnologias e execução do back, modelo de dados, integrantes com RM). A seção "Como executar o front-end" entrou no PR #10. Tecnologias e pastas do front, funcionalidades novas e a versão do Node atualizadas no PR [#19](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19).
-- [ ] Revisar os PRs do back e acompanhar o cronograma
+- [x] Revisar os PRs do back e acompanhar o cronograma
+  PRs revisados por Gustavo até o [#22](https://github.com/GustAndrade07/caderneta-de-fiado/pull/22); cronograma cumprido até a entrega de 17/11.
 
 **Estudar:** JPA vs Hibernate vs Spring Data, por que SQLite é relacional, chave primária e estrangeira, o que o `ddl-auto` faz.
 
@@ -129,8 +130,8 @@ Antes de começar a programar, os 4 do back decidem juntos as stacks pendentes d
   PR: [#9 API REST de fiados](https://github.com/GustAndrade07/caderneta-de-fiado/pull/9). Também inclui `GET /fiados/total` (total devido).
 - [x] Impedir que um usuário veja ou altere o fiado de outro
   PR: [#9 API REST de fiados](https://github.com/GustAndrade07/caderneta-de-fiado/pull/9) (teste de isolamento entre usuários em `FiadoControllerTestes`).
-- [ ] Testar todos os endpoints no Insomnia ou Postman e salvar a coleção no repositório
-  Os endpoints têm testes automáticos, mas a coleção do Insomnia/Postman ainda não está no repositório.
+- [x] Testar todos os endpoints no Insomnia ou Postman e salvar a coleção no repositório
+  PR: [#22 Padroniza pacotes, corrige CORS e adiciona coleção Postman](https://github.com/GustAndrade07/caderneta-de-fiado/pull/22). A coleção `backend/postman/caderneta-fiado-endpoints.postman_collection.json` cobre os 7 endpoints de `/fiados` (listar, buscar, criar, editar, pagar, excluir e total), com os casos 401, 400 e 404 e testes em cada requisição.
 
 **Estudar:** os verbos HTTP e quando usar cada um, o caminho controller → service → repository, os códigos de status.
 
@@ -165,7 +166,8 @@ Antes de começar a programar, os 4 do front decidem juntos as stacks pendentes 
   URL base (`EXPO_PUBLIC_API_URL`), token em toda requisição e logout automático em 401 no PR #10; o axios já rejeita respostas fora de 2xx (equivale ao `response.ok`). Timeout de 10 s (`timeout: 10000` em `services/api.ts`) entrou pelo PR [#15 Login e cadastro](https://github.com/GustAndrade07/caderneta-de-fiado/pull/15).
 - [x] Tema centralizado (cores e espaçamentos)
   Cores em `theme/colors.ts` no PR #10; `spacing` e `radius` no mesmo arquivo pelo PR [#20](https://github.com/GustAndrade07/caderneta-de-fiado/pull/20). As telas ainda usam valores fixos em vez dessas escalas.
-- [ ] Dar suporte aos outros 3 do front
+- [x] Dar suporte aos outros 3 do front
+  João Pedro deu suporte ao Nicolas, ao Vinicius e ao Eduardo durante a integração.
 
 **Estudar:** como funciona a navegação em pilha e em abas, Context e `useContext`, a diferença entre SecureStore e AsyncStorage e por que o token não fica no AsyncStorage.
 
@@ -214,12 +216,12 @@ Antes de começar a programar, os 4 do front decidem juntos as stacks pendentes 
 
 **Estudar:** como a tela recebe parâmetros pela navegação (`route.params`), a diferença entre POST e PUT, o que o logout apaga e por quê.
 
-## Situação em 17/11/2026
+## Situação em 17/11/2026: projeto completo
 
-Resumo do que já está na `main` (até o PR #20):
+Todas as tarefas do plano estão concluídas e na `main` (até o PR #22).
 
-- **Back-end:** API completa e protegida por JWT (cadastro, login, perfil, CRUD de fiados, total devido, erros em JSON), senha com mínimo de 8 caracteres, CORS liberado para o app web, banco SQLite com dados de exemplo, 53 testes automáticos passando e evidência do teste 401/200. Falta a coleção do Insomnia/Postman com todos os endpoints de `/fiados` (Pedro).
-- **Front-end:** completo. Login, Cadastro, abas Fiados e Perfil, Lista (com filtro salvo no AsyncStorage), Detalhe e Formulário, integrados com a API, com token no SecureStore, usuário no `AuthContext` e no AsyncStorage, timeout e logout em 401. Funciona no celular e na web.
+- **Back-end:** completo. API protegida por JWT (cadastro, login, perfil, CRUD de fiados, total devido, erros em JSON), senha com mínimo de 8 caracteres, CORS liberado para o app web, banco SQLite com dados de exemplo, 54 testes automáticos passando, evidência do teste 401/200 e coleção do Postman com todos os endpoints de `/fiados`.
+- **Front-end:** completo. Login, Cadastro, abas Fiados e Perfil, Lista (com filtro salvo no AsyncStorage), Detalhe e Formulário, integrados com a API, com token no SecureStore, usuário no `AuthContext` e no AsyncStorage, timeout e logout em 401. Testado por todos os integrantes no celular, com Expo Go, e também na web.
 - **Documentação:** README completo, com back e front (tecnologias, pastas, execução e Node 22.13+).
 
 ## Cronograma
