@@ -270,14 +270,14 @@ Sem token, a resposta é `401`. Com `-H "Authorization: Bearer <token>"`, a requ
 
 ### Configuração da API
 
-Na pasta `frontend/`, crie `.env.local` (ignorado pelo Git) com o endereço da API:
+Não precisa configurar nada: o app descobre a API sozinho (`frontend/src/services/api.ts`). No Expo Go ele usa o IP do computador que rodou `npx expo start` (o mesmo que aparece no QR code), na porta 8080; na web, o computador da página; no emulador Android, `10.0.2.2`.
 
-```dotenv
-# Emulador Android
-EXPO_PUBLIC_API_URL=http://10.0.2.2:8080
-```
+Para o celular conectar:
 
-Para um celular físico com Expo Go, troque `10.0.2.2` pelo IPv4 do computador na mesma rede Wi-Fi, por exemplo `http://192.168.1.10:8080`. O `localhost` do celular aponta para o próprio celular.
+- celular e computador na **mesma rede Wi-Fi** (redes que isolam aparelhos, comuns em faculdades, bloqueiam; use o roteador do celular do próprio PC);
+- o **Firewall do Windows** precisa liberar o Java na porta 8080. Na primeira vez que a API sobe, o Windows pergunta: marque "Redes privadas" e "Redes públicas". Para conferir, abra `http://IP-DO-PC:8080/fiados` no navegador do celular: tem que aparecer um erro 401 em JSON.
+
+Se a API estiver em outro endereço, crie `frontend/.env.local` (ignorado pelo Git) com `EXPO_PUBLIC_API_URL=http://IP:8080`. Um `.env.local` antigo apontando para `10.0.2.2` ou `localhost` impede o celular de conectar: apague-o.
 
 Em dois terminais, a partir da raiz do repositório:
 
@@ -293,7 +293,7 @@ npm ci
 npx expo start --lan
 ```
 
-Abra o app no Expo Go ou no emulador. Para usar no navegador, aperte `w` no terminal do Expo (ou rode `npx expo start --web`); sem `.env.local`, a web acessa a API em `http://localhost:8080` (se o `.env.local` apontar para `10.0.2.2`, a web não conecta). Para testar, use `demo@caderneta.com` / `senha123` ou crie uma conta. O cadastro salva o usuário em `backend/fiado.db` e entra automaticamente. Ao iniciar de novo, o app confere o token em `/usuarios/me`; mantenha `JWT_SECRET` igual entre reinícios da API para preservar a sessão.
+Abra o app no Expo Go ou no emulador. Para usar no navegador, aperte `w` no terminal do Expo (ou rode `npx expo start --web`); sem `.env.local`, a web acessa a API no mesmo computador da página, porta 8080. Para testar, use `demo@caderneta.com` / `senha123` ou crie uma conta. O cadastro salva o usuário em `backend/fiado.db` e entra automaticamente. Ao iniciar de novo, o app confere o token em `/usuarios/me`; mantenha `JWT_SECRET` igual entre reinícios da API para preservar a sessão.
 
 ## Como contribuir
 
