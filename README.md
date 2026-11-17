@@ -295,6 +295,18 @@ npx expo start --lan
 
 Abra o app no Expo Go ou no emulador. Para usar no navegador, aperte `w` no terminal do Expo (ou rode `npx expo start --web`); sem `.env.local`, a web acessa a API no mesmo computador da página, porta 8080. Para testar, use `demo@caderneta.com` / `senha123` ou crie uma conta. O cadastro salva o usuário em `backend/fiado.db` e entra automaticamente. Ao iniciar de novo, o app confere o token em `/usuarios/me`; mantenha `JWT_SECRET` igual entre reinícios da API para preservar a sessão.
 
+### Versão publicada no Expo (EAS Update)
+
+O app está publicado no projeto [`@gustandrade07s-team/caderneta-de-fiado`](https://expo.dev/accounts/gustandrade07s-team/projects/caderneta-de-fiado), canal `preview`. Para abrir: na página do update no expo.dev, clique em **Preview** e leia o QR code com o Expo Go.
+
+A versão publicada não tem o `npx expo start` para descobrir o IP, então o endereço da API vai fixo na publicação. Ela só funciona com a API rodando nesse computador e o celular na mesma rede. Para publicar de novo (por exemplo, no PC da apresentação), dentro de `frontend/`:
+
+```powershell
+npx eas-cli@latest login
+$env:EXPO_PUBLIC_API_URL = "http://IP-DO-PC:8080"
+npx eas-cli@latest update --channel preview --platform all --environment preview --message "descrição"
+```
+
 ## Como contribuir
 
 1. Crie uma branch a partir da `main`: `funcionalidade/nome-da-tarefa`
