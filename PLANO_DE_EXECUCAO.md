@@ -101,7 +101,7 @@ Antes de começar a programar, os 4 do back decidem juntos as stacks pendentes d
   PR: [#3 Dados de exemplo (seed) para a demonstração](https://github.com/GustAndrade07/caderneta-de-fiado/pull/3)
 - [x] README completo: problema, dados do IBGE, como rodar, integrantes com nome e RM
   PR: [#4 Documentação: README completo](https://github.com/GustAndrade07/caderneta-de-fiado/pull/4)
-  Parte do Gustavo concluída (problema com dado do IBGE, tecnologias e execução do back, modelo de dados, integrantes com RM). A seção "Como executar o front-end" entrou no PR #10; as tecnologias do front ainda aparecem como "a definir" no README (equipe de front).
+  Parte do Gustavo concluída (problema com dado do IBGE, tecnologias e execução do back, modelo de dados, integrantes com RM). A seção "Como executar o front-end" entrou no PR #10. Tecnologias e pastas do front, funcionalidades novas e a versão do Node atualizadas no PR [#19](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19).
 - [ ] Revisar os PRs do back e acompanhar o cronograma
 
 **Estudar:** JPA vs Hibernate vs Spring Data, por que SQLite é relacional, chave primária e estrangeira, o que o `ddl-auto` faz.
@@ -209,7 +209,8 @@ Antes de começar a programar, os 4 do front decidem juntos as stacks pendentes 
   PR: [#14 Formulário de fiado e tela de perfil](https://github.com/GustAndrade07/caderneta-de-fiado/pull/14)
 - [x] Tela de perfil: dados do `/usuarios/me` e botão Sair, que apaga o token do SecureStore
   PR: [#14 Formulário de fiado e tela de perfil](https://github.com/GustAndrade07/caderneta-de-fiado/pull/14)
-- [ ] Corrigir o botão Sair na versão web: o `Alert.alert` com botões não aparece no navegador, então o logout não acontece. Usar o `confirmar()` de `utils/confirmar.ts` (PR #19).
+- [x] Corrigir o botão Sair na versão web: o `Alert.alert` com botões não aparece no navegador, então o logout não acontecia
+  PR: [#19 Tela de detalhe e filtro de fiados salvo no AsyncStorage](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19) (feito por Gustavo). O Sair passou a usar `confirmar()` e os avisos de erro do formulário usam `avisar()`, ambos de `utils/confirmar.ts`.
 
 **Estudar:** como a tela recebe parâmetros pela navegação (`route.params`), a diferença entre POST e PUT, o que o logout apaga e por quê.
 
@@ -218,8 +219,8 @@ Antes de começar a programar, os 4 do front decidem juntos as stacks pendentes 
 Resumo do que já está na `main` (ou no PR #19, aguardando revisão):
 
 - **Back-end:** API completa e protegida por JWT (cadastro, login, perfil, CRUD de fiados, total devido, erros em JSON), senha com mínimo de 8 caracteres, banco SQLite com dados de exemplo, testes automáticos e evidência do teste 401/200. O PR #19 corrige o CORS, que bloqueava o app na web. Falta a coleção do Insomnia/Postman com todos os endpoints de `/fiados` (Pedro).
-- **Front-end:** todas as telas prontas e integradas com a API: Login, Cadastro, Lista (com filtro salvo no AsyncStorage), Detalhe, Formulário e Perfil, com timeout e logout em 401. Faltam as abas Fiados e Perfil, o `usuario` no `AuthContext`, o nome do usuário no AsyncStorage e os espaçamentos no tema (João Pedro), e o botão Sair na web (Eduardo).
-- **Documentação:** README do back completo. Falta atualizar o README: ainda diz que o front "será criado" e deixa as tecnologias do front "a definir" (Gustavo).
+- **Front-end:** todas as telas prontas e integradas com a API: Login, Cadastro, Lista (com filtro salvo no AsyncStorage), Detalhe, Formulário e Perfil, com timeout e logout em 401. Faltam as abas Fiados e Perfil, o `usuario` no `AuthContext`, o nome do usuário no AsyncStorage e os espaçamentos no tema (João Pedro). O botão Sair na web foi corrigido no PR #19.
+- **Documentação:** README completo, com back e front (tecnologias, pastas, execução e Node 22.13+), atualizado no PR #19.
 
 ## Cronograma
 
