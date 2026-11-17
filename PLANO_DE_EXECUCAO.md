@@ -273,6 +273,8 @@ O professor escolhe qualquer integrante e a nota depende da resposta. Todos prec
   Registradas na tabela de tecnologias do README (Java 21, Maven, jjwt, Lombok, DTOs). Swagger não foi adotado.
 - [x] Stacks do front decididas e registradas no README — João Pedro, Nicolas, Vinicius, Eduardo, até 13/11
   Registradas na tabela de tecnologias do README pelo PR [#19](https://github.com/GustAndrade07/caderneta-de-fiado/pull/19): TypeScript, Expo Router, Context API, axios, SecureStore, AsyncStorage e estilo próprio.
+- [x] App no celular (Expo Go) não conectava à API: sem `.env`, o app chamava `localhost:8080`, que no celular é o próprio aparelho — Gustavo
+  PR: [#24 App descobre sozinho o IP da API no celular](https://github.com/GustAndrade07/caderneta-de-fiado/pull/24). O `services/api.ts` passou a usar o IP do PC que rodou o `npx expo start`; o README explica Wi-Fi e firewall.
 - [x] Confirmar o número de informalidade no site do IBGE — Gustavo
   README traz 37,5% (trimestre encerrado em setembro de 2026) com link para o release do IBGE.
 
