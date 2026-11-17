@@ -1,5 +1,5 @@
 import { api } from './api';
-import { AuthResponse } from '../types';
+import { AuthResponse, Usuario } from '../types';
 
 export interface LoginPayload {
   email: string;
@@ -18,7 +18,13 @@ export const authService = {
     return response.data;
   },
 
-  async cadastrar(dados: CadastroPayload): Promise<void> {
-    await api.post('/auth/cadastro', dados);
+  async cadastrar(dados: CadastroPayload): Promise<Usuario> {
+    const response = await api.post<Usuario>('/auth/register', dados);
+    return response.data;
+  },
+
+  async me(): Promise<Usuario> {
+    const response = await api.get<Usuario>('/usuarios/me');
+    return response.data;
   },
 };

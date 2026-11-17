@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -11,12 +11,10 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AppStackParamList, Fiado } from '../types';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Fiado } from '../types';
 import { api } from '../services/api';
 import { colors } from '../theme/colors';
-
-type Props = NativeStackScreenProps<AppStackParamList, 'FormularioFiado'>;
 
 type Erros = { nomeCliente?: string; valor?: string; data?: string };
 
@@ -56,15 +54,42 @@ const telaParaApi = (texto: string): string | null => {
 // Aceita "12,50" e "12.50".
 const textoParaValor = (texto: string) => Number(texto.trim().replace(',', '.'));
 
-export function FormularioFiadoScreen({ route, navigation }: Props) {
-  const fiadoEdicao: Fiado | undefined = route.params?.fiado;
+export function FormularioFiadoScreen() {
+  const router = useRouter();
+  // Para editar: router.push({ pathname: '/formulario', params: { id: fiado.id } }).
+  const { id } = useLocalSearchParams<{ id?: string }>();
+  const [fiadoEdicao, setFiadoEdicao] = useState<Fiado | undefined>(undefined);
 
-  const [nomeCliente, setNomeCliente] = useState(fiadoEdicao?.nomeCliente ?? '');
-  const [valor, setValor] = useState(fiadoEdicao ? String(fiadoEdicao.valor).replace('.', ',') : '');
-  const [data, setData] = useState(fiadoEdicao ? apiParaTela(fiadoEdicao.data) : hojeNaTela());
-  const [descricao, setDescricao] = useState(fiadoEdicao?.descricao ?? '');
+  const [nomeCliente, setNomeCliente] = useState('');
+  const [valor, setValor] = useState('');
+  const [data, setData] = useState(hojeNaTela());
+  const [descricao, setDescricao] = useState('');
   const [erros, setErros] = useState<Erros>({});
   const [salvando, setSalvando] = useState(false);
+  const [carregando, setCarregando] = useState(!!id);
+
+  useEffect(() => {
+    if (!id) return;
+    let ativo = true;
+    api.get<Fiado>(`/fiados/${id}`)
+      .then(({ data: fiado }) => {
+        if (!ativo) return;
+        setFiadoEdicao(fiado);
+        setNomeCliente(fiado.nomeCliente);
+        setValor(String(fiado.valor).replace('.', ','));
+        setData(apiParaTela(fiado.data));
+        setDescricao(fiado.descricao ?? '');
+      })
+      .catch((erro: any) => {
+        // 401 já é tratado pelo interceptador do axios (volta para o login).
+        if (ativo && erro?.response?.status !== 401) {
+          Alert.alert('Não foi possível carregar o fiado', 'Tente novamente em alguns instantes.');
+          router.back();
+        }
+      })
+      .finally(() => { if (ativo) setCarregando(false); });
+    return () => { ativo = false; };
+  }, [id, router]);
 
   const validar = (): Erros => {
     const novosErros: Erros = {};
@@ -104,7 +129,7 @@ export function FormularioFiadoScreen({ route, navigation }: Props) {
         await api.post<Fiado>('/fiados', corpo);
       }
       // A lista recarrega sozinha ao voltar (useFocusEffect em ListaFiadosScreen).
-      navigation.goBack();
+      router.back();
     } catch (erro: any) {
       // 401 já é tratado pelo interceptador do axios (volta para o login).
       if (erro?.response?.status !== 401) {
@@ -115,6 +140,14 @@ export function FormularioFiadoScreen({ route, navigation }: Props) {
       setSalvando(false);
     }
   };
+
+  if (carregando) {
+    return (
+      <View style={[styles.flex, styles.centro]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -171,7 +204,7 @@ export function FormularioFiadoScreen({ route, navigation }: Props) {
             <Text style={styles.textoBotaoSalvar}>{fiadoEdicao ? 'Salvar alterações' : 'Salvar fiado'}</Text>
           )}
         </Pressable>
-        <Pressable style={styles.botaoCancelar} onPress={() => navigation.goBack()} disabled={salvando}>
+        <Pressable style={styles.botaoCancelar} onPress={() => router.back()} disabled={salvando}>
           <Text style={styles.textoBotaoCancelar}>Cancelar</Text>
         </Pressable>
       </ScrollView>
@@ -182,6 +215,7 @@ export function FormularioFiadoScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.background },
   container: { padding: 20 },
+  centro: { alignItems: 'center', justifyContent: 'center' },
   title: { fontSize: 22, fontWeight: 'bold', color: colors.text, marginBottom: 12 },
   label: { color: colors.text, fontSize: 15, fontWeight: '600', marginTop: 14, marginBottom: 6 },
   input: {

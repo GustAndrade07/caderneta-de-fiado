@@ -15,17 +15,5 @@ export interface Fiado {
 
 export interface AuthResponse {
   token: string;
-  usuario?: Usuario;
+  tipo: 'Bearer';
 }
-
-export type AuthStackParamList = {
-  Login: undefined;
-  Cadastro: undefined;
-};
-
-export type AppStackParamList = {
-  ListaFiados: undefined;
-  DetalheFiado: { fiadoId: number };
-  FormularioFiado: { fiado?: Fiado };
-  Perfil: undefined;
-};
